@@ -96,7 +96,10 @@ $page_tagline = get_the_excerpt();
 							    				{
 						    			?>
                                         <form id="tour_variable_form">
-                                            <input type="number" name="quantity" id="<?php echo esc_attr('quantity_' . $variation_ID); ?>" class="input-text qty text" step="1" min="1" max="<?php echo $tour_availability; ?>" value="1" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" aria-labelledby="" />
+                                            <div class="tour_quantity">
+                                                <input type="number" name="quantity" id="<?php echo esc_attr('quantity_' . $variation_ID); ?>" class="input-text qty text" step="1" min="1" max="<?php echo $tour_availability; ?>" value="1" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" aria-labelledby="" />
+                                                <?php esc_html_e("Person / People", 'grandtour-custom'); ?>
+                                            </div>
                                             <?php grandtour_deposits_form_output($tour_booking_product); ?>
                                         </form>
 						    			<?php esc_html_e("Click button below to book this tour and make a payment.", 'grandtour'); ?>
@@ -162,7 +165,10 @@ $page_tagline = get_the_excerpt();
 							    				{
 								    	?>
                                         <form id="tour_variable_form">
-                                            <input type="number" name="quantity" id="<?php echo esc_attr('quantity_' . $variation_ID); ?>" class="input-text qty text" step="1" min="1" max="<?php echo $tour_availability; ?>" value="1" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" aria-labelledby="">
+                                            <div class="tour_quantity">
+                                                <input type="number" name="quantity" id="<?php echo esc_attr('quantity_' . $variation_ID); ?>" class="input-text qty text" step="1" min="1" max="<?php echo $tour_availability; ?>" value="1" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" aria-labelledby="">
+                                                <?php esc_html_e("Person / People", 'grandtour-custom'); ?>
+                                            </div>
                                             <?php grandtour_deposits_form_output($tour_booking_product); ?>
                                         </form>
 								    	<?php esc_html_e("Click button below to book this tour and make a payment.", 'grandtour'); ?>

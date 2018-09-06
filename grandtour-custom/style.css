@@ -10,3 +10,8 @@
  License URI:  http://www.gnu.org/licenses/gpl-2.0.html
  Text Domain:  grandtour-custom
 */
+
+#tour_variable_form .tour_quantity {
+    text-align: left;
+    margin: 0 0 1em;
+}
