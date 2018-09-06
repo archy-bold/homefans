@@ -100,10 +100,10 @@ $page_tagline = get_the_excerpt();
                                                 <input type="number" name="quantity" id="<?php echo esc_attr('quantity_' . $variation_ID); ?>" class="input-text qty text" step="1" min="1" max="<?php echo $tour_availability; ?>" value="1" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" aria-labelledby="" />
                                                 <?php esc_html_e("Person / People", 'grandtour-custom'); ?>
                                             </div>
-                                            <?php grandtour_deposits_form_output($tour_booking_product); ?>
+                                            <?php gt_custom_deposits_form_output($tour_booking_product); ?>
                                         </form>
 						    			<?php esc_html_e("Click button below to book this tour and make a payment.", 'grandtour'); ?>
-                                        <button data-product="<?php echo esc_attr($tour_booking_product); ?>" data-processing="<?php esc_html_e("Please wait...", 'grandtour'); ?>" data-url="<?php echo admin_url('admin-ajax.php').esc_attr("?action=grandtour_custom_add_to_cart&product_id=".$tour_booking_product); ?>" class="single_tour_add_to_cart_custom button"><?php esc_html_e("Book This Tour", 'grandtour'); ?></button>
+                                        <button data-product="<?php echo esc_attr($tour_booking_product); ?>" data-processing="<?php esc_html_e("Please wait...", 'grandtour'); ?>" data-url="<?php echo admin_url('admin-ajax.php').esc_attr("?action=gt_custom_add_to_cart&product_id=".$tour_booking_product); ?>" class="single_tour_add_to_cart_custom button"><?php esc_html_e("Book This Tour", 'grandtour'); ?></button>
 						    			<?php
 							    				} //end simple product
 							    				else if($obj_product->is_type('variable'))
@@ -153,11 +153,11 @@ $page_tagline = get_the_excerpt();
 
 											<?php
 													}
-                                                    grandtour_deposits_form_output($tour_booking_product);
+                                                    gt_custom_deposits_form_output($tour_booking_product);
 											?>
 								    	</form>
 
-										<button data-product="<?php echo esc_attr($tour_booking_product); ?>" data-processing="<?php esc_html_e("Please wait...", 'grandtour'); ?>" data-url="<?php echo admin_url('admin-ajax.php').esc_attr("?action=grandtour_custom_add_to_cart&product_id=".$tour_booking_product); ?>" class="single_tour_add_to_cart_custom product_variable button"><?php esc_html_e("Book This Tour", 'grandtour'); ?></button>
+										<button data-product="<?php echo esc_attr($tour_booking_product); ?>" data-processing="<?php esc_html_e("Please wait...", 'grandtour'); ?>" data-url="<?php echo admin_url('admin-ajax.php').esc_attr("?action=gt_custom_add_to_cart&product_id=".$tour_booking_product); ?>" class="single_tour_add_to_cart_custom product_variable button"><?php esc_html_e("Book This Tour", 'grandtour'); ?></button>
 
 								    		<?php
 							    				} //end variable product
@@ -169,10 +169,10 @@ $page_tagline = get_the_excerpt();
                                                 <input type="number" name="quantity" id="<?php echo esc_attr('quantity_' . $variation_ID); ?>" class="input-text qty text" step="1" min="1" max="<?php echo $tour_availability; ?>" value="1" title="Qty" size="4" pattern="[0-9]*" inputmode="numeric" aria-labelledby="">
                                                 <?php esc_html_e("Person / People", 'grandtour-custom'); ?>
                                             </div>
-                                            <?php grandtour_deposits_form_output($tour_booking_product); ?>
+                                            <?php gt_custom_deposits_form_output($tour_booking_product); ?>
                                         </form>
 								    	<?php esc_html_e("Click button below to book this tour and make a payment.", 'grandtour'); ?>
-						    			<button data-product="<?php echo esc_attr($tour_booking_product); ?>" data-processing="<?php esc_html_e("Please wait...", 'grandtour'); ?>" data-url="<?php echo admin_url('admin-ajax.php').esc_attr("?action=grandtour_custom_add_to_cart&product_id=".$tour_booking_product); ?>" class="single_tour_add_to_cart_custom button"><?php esc_html_e("Book This Tour", 'grandtour'); ?></button>
+						    			<button data-product="<?php echo esc_attr($tour_booking_product); ?>" data-processing="<?php esc_html_e("Please wait...", 'grandtour'); ?>" data-url="<?php echo admin_url('admin-ajax.php').esc_attr("?action=gt_custom_add_to_cart&product_id=".$tour_booking_product); ?>" class="single_tour_add_to_cart_custom button"><?php esc_html_e("Book This Tour", 'grandtour'); ?></button>
 								    	<?php
 							    				}
 							    		?>

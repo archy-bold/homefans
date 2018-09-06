@@ -1,18 +1,18 @@
 <?php
 
-function grandtour_custom_enqueue_front_page_scripts()  {
+function gt_custom_enqueue_front_page_scripts()  {
     // Enqueue the JS
     wp_enqueue_script('grandtour-custom-all', get_stylesheet_directory_uri() . '/script.js', false, "", true);
 }
-add_action( 'wp_enqueue_scripts', 'grandtour_custom_enqueue_front_page_scripts' );
+add_action( 'wp_enqueue_scripts', 'gt_custom_enqueue_front_page_scripts' );
 
 /**
 *	Setup add product to cart function
 **/
-add_action('wp_ajax_grandtour_custom_add_to_cart', 'grandtour_custom_add_to_cart');
-add_action('wp_ajax_nopriv_grandtour_custom_add_to_cart', 'grandtour_custom_add_to_cart');
+add_action('wp_ajax_gt_custom_add_to_cart', 'gt_custom_add_to_cart');
+add_action('wp_ajax_nopriv_gt_custom_add_to_cart', 'gt_custom_add_to_cart');
 
-function grandtour_custom_add_to_cart() {
+function gt_custom_add_to_cart() {
 	if(isset($_GET['product_id']) && !empty($_GET['product_id']) && class_exists('Woocommerce'))
 	{
 		$product_ID = $_GET['product_id'];
@@ -58,7 +58,7 @@ function grandtour_custom_add_to_cart() {
 	die();
 }
 
-function grandtour_deposits_form_output($productID) {
+function gt_custom_deposits_form_output($productID) {
     $product = get_post($productID);
     if ( !is_null($product) && WC_Deposits_Product_Manager::deposits_enabled( $product->ID ) ) {
         wp_enqueue_script( 'wc-deposits-frontend' );
