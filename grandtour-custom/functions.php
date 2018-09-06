@@ -65,3 +65,20 @@ function gt_custom_deposits_form_output($productID) {
         wc_get_template( 'deposit-form.php', array( 'post' => $product ), 'woocommerce-deposits', WC_DEPOSITS_TEMPLATE_PATH );
     }
 }
+
+function gt_custom_get_formatted_deposit_amount( $product_id ) {
+    $product = wc_get_product( $product_id );
+
+    if ( $amount = self::get_deposit_amount_for_display( $product ) ) {
+        $type    = self::get_deposit_type( $product_id );
+
+        $item = __( 'person', 'woocommerce-deposits' );
+
+        if ( 'percent' === $type ) {
+            return sprintf( __( 'Pay a %1$s deposit per %2$s', 'woocommerce-deposits' ), '<span class="wc-deposits-amount">' . $amount . '</span>', $item );
+        } else {
+            return sprintf( __( 'Pay a deposit of %1$s per %2$s', 'woocommerce-deposits' ), '<span class="wc-deposits-amount">' . $amount . '</span>', $item );
+        }
+    }
+    return '';
+}
