@@ -15,3 +15,40 @@
     text-align: left;
     margin: 0 0 1em;
 }
+
+.woocommerce-checkout {
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.wc-stripe-checkout-button {
+    font-size: 100%;
+    margin: 0;
+    line-height: 1;
+    cursor: pointer;
+    position: relative;
+    text-decoration: none;
+    overflow: visible;
+    padding: .618em 1em;
+    font-weight: 700;
+    border-radius: 3px;
+    left: auto;
+    color: #ffffff;
+    background-color: #007AFF;
+    border-color: #007AFF;
+    border: 0;
+    display: inline-block;
+    background-image: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    text-shadow: none;
+    -webkit-transition: color .2s linear, background .1s linear, opacity .2s linear;
+    -moz-transition: color .2s linear, background .1s linear, opacity .2s linear;
+    -ms-transition: color .2s linear, background .1s linear, opacity .2s linear;
+    -o-transition: color .2s linear, background .1s linear, opacity .2s linear;
+    transition: color .2s linear, background .1s linear, opacity .2s linear;
+}
+
+.wc-stripe-checkout-button:hover {
+    background: #222;
+}
