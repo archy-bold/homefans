@@ -1,5 +1,18 @@
 <?php
 
+if ($_GET['testing'] == 'true') {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    add_action( 'wp_loaded', 'gt_custom_test' );
+}
+
+function gt_custom_test () {
+    // Do whatever here to test
+    exit;
+}
+
+define( 'GT_CUSTOM_THEME_PATH', untrailingslashit( get_template_directory() ) . '/' );
+
 function gt_custom_enqueue_front_page_scripts()  {
     // Enqueue the JS
     wp_enqueue_script('grandtour-custom-all', get_stylesheet_directory_uri() . '/script.js', false, "", true);
