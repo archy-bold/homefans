@@ -96,9 +96,45 @@ function gt_custom_get_formatted_deposit_amount( $product_id ) {
     return '';
 }
 
-// Add order item
+// Add order item product description
 add_action('woocommerce_order_item_meta_end', 'gt_custom_render_product_description', 10, 3);
 function gt_custom_render_product_description($item_id, $item, $order){
     $_product = $order->get_product_from_item( $item );
     echo "<br>" . apply_filters('the_content', $_product->post->post_content);
+}
+
+add_action('woocommerce_email_after_order_table', 'gt_custom_render_additional_order_notes', 10, 3);
+function gt_custom_render_additional_order_notes($order){
+    // Get the totals in.
+    $orderManager = WC_Deposits_Order_Manager::get_instance();
+    $totalRows = $order->get_order_item_totals();
+    $totalRows = $orderManager->woocommerce_get_order_item_totals($totalRows, $order);
+    // Get the due date from the first order item product.
+    $dueDate = null;
+    $items = $order->get_items();
+    foreach ($items as $key => $item) {
+        $product = wc_get_product( $item['product_id'] );
+        $dueDate = get_post_meta($product->get_id(), 'balance_due_date', true);
+        if ($dueDate) {
+            break;
+        }
+    }
+
+    echo '<div style="margin-bottom: 40px;">';
+
+    echo '<p>Thank You for your business.</p>';
+
+    if (WC_Deposits_Order_Manager::has_deposit($order)) {
+        echo '<p>Deposit payment (' . $totalRows['order_total']['value'] . ') is non-refundable.</p>';
+        echo '<p>Please proceed with pending payment (' . $totalRows['future']['value'] . ') ';
+        if ($dueDate) {
+            echo 'by ' . date('F j, Y', strtotime($dueDate)) . '. ';
+        }
+        else {
+            echo 'a month before the trip. ';
+        }
+        echo 'We will send you a payment link closer to the date.</p>';
+    }
+
+    echo '</div>';
 }
