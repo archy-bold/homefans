@@ -95,3 +95,10 @@ function gt_custom_get_formatted_deposit_amount( $product_id ) {
     }
     return '';
 }
+
+// Add order item
+add_action('woocommerce_order_item_meta_end', 'gt_custom_render_product_description', 10, 3);
+function gt_custom_render_product_description($item_id, $item, $order){
+    $_product = $order->get_product_from_item( $item );
+    echo "<br>" . apply_filters('the_content', $_product->post->post_content);
+}
