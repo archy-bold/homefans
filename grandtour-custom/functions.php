@@ -138,3 +138,15 @@ function gt_custom_render_additional_order_notes($order){
 
     echo '</div>';
 }
+
+add_action( 'woocommerce_email_customer_details', 'gt_custom_email_footer', 50, 4);
+function gt_custom_email_footer( $email ) {
+    echo '<h4>Terms and Conditions</h4>';
+    echo '<p style="font-size: 12px;">Homefans Ltd is a registered company in England and ';
+    echo 'Wales, Company Number 09737660. By receiving this ';
+    echo 'invoice you agree with Homefans Booking Conditions: ';
+    echo '<a href="https://homefans.net/booking-conditions/">https://homefans.net/booking-conditions/</a></p>';
+    echo '<p style="font-size: 12px;">Should you have any questions, please call Daniel at ';
+    echo '+447460626600 or send us a message to ';
+    echo '<a href="mailto:daniel@homefans.net">daniel@homefans.net</a></p>';
+}
