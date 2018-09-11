@@ -11,6 +11,49 @@ function gt_custom_test () {
     exit;
 }
 
+// Scheduler to send balance emails out
+if ( ! wp_next_scheduled( 'gt_custom_balance_emails_task_hook' ) ) {
+    $time = strtotime('midnight', time());
+    wp_schedule_event( time(), 'daily', 'gt_custom_balance_emails_task_hook' );
+}
+add_action( 'gt_custom_balance_emails_task_hook', 'gt_custom_send_balance_emails' );
+function gt_custom_send_balance_emails() {
+    // Get the orders in status of partially paid
+    $orders = wc_get_orders( array(
+        'limit' => -1,
+        'post_status' => array('wc-partial-payment'),
+    ) );
+    var_dump(count($orders));
+    foreach ($orders as $order) {
+        $item = null;
+        $dueDate = gt_custom_get_order_due_date($order, $item);
+        // If there's a due date and we're a week before it.
+        if ($dueDate) {
+            var_dump(strtotime('-1 week', strtotime($dueDate)));
+        }
+        if ($dueDate && strtotime('-1 week', strtotime($dueDate)) < time()) {
+            /// Can't be payment plan
+            if (!WC_Deposits_Order_Item_Manager::get_payment_plan( $item )) {
+                // Check if we've already sent the order.
+                $remaining                  = $item['deposit_full_amount'] - $order->get_line_total( $item, true );
+				$remaining_balance_order_id = ! empty( $item['remaining_balance_order_id'] ) ? absint( $item['remaining_balance_order_id'] ) : 0;
+				$remaining_balance_paid     = ! empty( $item['remaining_balance_paid'] );
+
+                var_dump($remaining);
+                if (// No remaining balance order
+                    ($remaining_balance_order_id == 0 || !wc_get_order( $remaining_balance_order_id )) &&
+                    // Balance hasn't been paid
+                    !$remaining_balance_paid &&
+                    // not without future payments
+                    ! WC_Deposits_Order_Manager::has_deposit_without_future_payments( $order->get_id() )
+                ) {
+                    gt_custom_invoice_remaining_balance($order, $item);
+                }
+            }
+        }
+    }
+}
+
 define( 'GT_CUSTOM_THEME_PATH', untrailingslashit( get_template_directory() ) . '/' );
 
 function gt_custom_enqueue_front_page_scripts()  {
@@ -110,15 +153,7 @@ function gt_custom_render_additional_order_notes($order){
     $totalRows = $order->get_order_item_totals();
     $totalRows = $orderManager->woocommerce_get_order_item_totals($totalRows, $order);
     // Get the due date from the first order item product.
-    $dueDate = null;
-    $items = $order->get_items();
-    foreach ($items as $key => $item) {
-        $product = wc_get_product( $item['product_id'] );
-        $dueDate = get_post_meta($product->get_id(), 'balance_due_date', true);
-        if ($dueDate) {
-            break;
-        }
-    }
+    $dueDate = gt_custom_get_order_due_date($order);
 
     echo '<div style="margin-bottom: 40px;">';
 
@@ -149,4 +184,62 @@ function gt_custom_email_footer( $email ) {
     echo '<p style="font-size: 12px;">Should you have any questions, please call Daniel at ';
     echo '+447460626600 or send us a message to ';
     echo '<a href="mailto:daniel@homefans.net">daniel@homefans.net</a></p>';
+}
+
+function gt_custom_get_order_due_date($order, &$itemRef = null) {
+    $dueDate = null;
+    $items = $order->get_items();
+    foreach ($items as $key => $item) {
+        $product = wc_get_product( $item['product_id'] );
+        if ($product) {
+            $dueDate = get_post_meta($product->get_id(), 'balance_due_date', true);
+            if ($dueDate) {
+                $itemRef = $item;
+                break;
+            }
+        }
+    }
+    return $dueDate;
+}
+
+function gt_custom_invoice_remaining_balance($order, $item) {
+    $manager = WC_Deposits_Order_Manager::get_instance();
+    // Used for products with fixed deposits or percentage based deposits. Not used for payment plan products
+    // See WC_Deposits_Schedule_Order_Manager::schedule_orders_for_plan for creating orders for products with payment plans
+
+    // First, get the deposit_full_amount_ex_tax - this contains the full amount for the item excluding tax - see
+    // WC_Deposits_Cart_Manager::add_order_item_meta_legacy or add_order_item_meta for where we set this amount
+    // Note that this is for the line quantity, not necessarily just for quantity 1
+    $full_amount_excl_tax = floatval( $item['deposit_full_amount_ex_tax'] );
+
+    // Next, get the initial deposit already paid, excluding tax
+    $amount_already_paid = floatval( $item['deposit_deposit_amount_ex_tax'] );
+
+    // Then, set the item subtotal that will be used in create order to the full amount less the amount already paid
+    $subtotal = $full_amount_excl_tax - $amount_already_paid;
+
+    // Add WC3.2 Coupons upgrade compatibility
+    if( version_compare( WC_VERSION, '3.2', '>=' ) ){
+        // Lastly, subtract the deferred discount from the subtotal to get the total to be used to create the order
+        $discount_excl_tax = isset($item['deposit_deferred_discount_ex_tax']) ? floatval( $item['deposit_deferred_discount_ex_tax'] ) : 0;
+        $total = $subtotal - $discount_excl_tax;
+    } else {
+        $discount = floatval( $item['deposit_deferred_discount'] );
+        $total = empty( $discount ) ? $subtotal : $subtotal - $discount;
+    }
+    // And then create an order with this item
+    $create_item = array(
+        'product'   => $order->get_product_from_item( $item ),
+        'qty'       => $item['qty'],
+        'subtotal'  => $subtotal,
+        'total'     => $total
+    );
+
+    $new_order_id = $manager->create_order( current_time( 'timestamp' ), $order->get_id(), 2, $create_item, 'pending-deposit' );
+
+    wc_add_order_item_meta( $item_id, '_remaining_balance_order_id', $new_order_id );
+
+    // Email invoice
+    $emails = WC_Emails::instance();
+    $emails->customer_invoice( wc_get_order( $new_order_id ) );
 }
