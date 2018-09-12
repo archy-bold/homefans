@@ -157,18 +157,17 @@ function gt_custom_render_additional_order_notes($order){
 
     echo '<div style="margin-bottom: 40px;">';
 
-    echo '<p>Thank You for your business.</p>';
+    echo '<p>' . __( 'Thank you for your business.', 'grandtour-custom' ) .  '</p>';
 
     if (WC_Deposits_Order_Manager::has_deposit($order)) {
-        echo '<p>Deposit payment (' . $totalRows['order_total']['value'] . ') is non-refundable.</p>';
-        echo '<p>Please proceed with pending payment (' . $totalRows['future']['value'] . ') ';
+        $depositTerms1 = sprintf(__('Deposit payment (%s) is non-refundable.', 'grandtour-custom'), $totalRows['order_total']['value']);
+        $depositTerms2 = sprintf(__('Please proceed with pending payment (%s) a month before the trip.', 'grandtour-custom'), $totalRows['future']['value']);
         if ($dueDate) {
-            echo 'by ' . date('F j, Y', strtotime($dueDate)) . '. ';
+            $depositTerms2 = sprintf(__('Please proceed with pending payment (%s) by %s.', 'grandtour-custom'), $totalRows['future']['value'], date('F j, Y', strtotime($dueDate)));
         }
-        else {
-            echo 'a month before the trip. ';
-        }
-        echo 'We will send you a payment link closer to the date.</p>';
+        $depositTerms3 = __('We will send you a payment link closer to the date.', 'grandtour-custom');
+        echo '<p>' . $depositTerms1 . '</p>';
+        echo '<p>' . $depositTerms2 . ' ' . $depositTerms3 . '</p>';
     }
 
     echo '</div>';
@@ -176,14 +175,13 @@ function gt_custom_render_additional_order_notes($order){
 
 add_action( 'woocommerce_email_customer_details', 'gt_custom_email_footer', 50, 4);
 function gt_custom_email_footer( $email ) {
-    echo '<h4>Terms and Conditions</h4>';
-    echo '<p style="font-size: 12px;">Homefans Ltd is a registered company in England and ';
-    echo 'Wales, Company Number 09737660. By receiving this ';
-    echo 'invoice you agree with Homefans Booking Conditions: ';
+    echo '<h4>' . __( 'Terms and Conditions', 'grandtour-custom' ) .  '</h4>';
+    $terms1 = __( 'Homefans Ltd is a registered company in England and Wales, Company Number 09737660. By receiving this invoice you agree with Homefans Booking Conditions', 'grandtour-custom' );
+    $terms2 = __( 'Should you have any questions, please call Daniel at +447460626600 or send us a message to', 'grandtour-custom' );
+    echo '<p style="font-size: 12px;">' . $terms1 . ': ';
     echo '<a href="https://homefans.net/booking-conditions/">https://homefans.net/booking-conditions/</a></p>';
-    echo '<p style="font-size: 12px;">Should you have any questions, please call Daniel at ';
-    echo '+447460626600 or send us a message to ';
-    echo '<a href="mailto:daniel@homefans.net">daniel@homefans.net</a></p>';
+    echo '<p style="font-size: 12px;">' . $terms2;
+    echo ' <a href="mailto:daniel@homefans.net">daniel@homefans.net</a></p>';
 }
 
 function gt_custom_get_order_due_date($order, &$itemRef = null) {
