@@ -23,14 +23,10 @@ function gt_custom_send_balance_emails() {
         'limit' => -1,
         'post_status' => array('wc-partial-payment'),
     ) );
-    var_dump(count($orders));
     foreach ($orders as $order) {
         $item = null;
         $dueDate = gt_custom_get_order_due_date($order, $item);
         // If there's a due date and we're a week before it.
-        if ($dueDate) {
-            var_dump(strtotime('-1 week', strtotime($dueDate)));
-        }
         if ($dueDate && strtotime('-1 week', strtotime($dueDate)) < time()) {
             /// Can't be payment plan
             if (!WC_Deposits_Order_Item_Manager::get_payment_plan( $item )) {
@@ -39,7 +35,6 @@ function gt_custom_send_balance_emails() {
 				$remaining_balance_order_id = ! empty( $item['remaining_balance_order_id'] ) ? absint( $item['remaining_balance_order_id'] ) : 0;
 				$remaining_balance_paid     = ! empty( $item['remaining_balance_paid'] );
 
-                var_dump($remaining);
                 if (// No remaining balance order
                     ($remaining_balance_order_id == 0 || !wc_get_order( $remaining_balance_order_id )) &&
                     // Balance hasn't been paid
