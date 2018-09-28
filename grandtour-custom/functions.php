@@ -201,6 +201,7 @@ function gt_custom_get_order_due_date($order, &$itemRef = null) {
 }
 
 function gt_custom_invoice_remaining_balance($order, $item) {
+    $item_id = $item->get_id();
     $manager = WC_Deposits_Order_Manager::get_instance();
     // Used for products with fixed deposits or percentage based deposits. Not used for payment plan products
     // See WC_Deposits_Schedule_Order_Manager::schedule_orders_for_plan for creating orders for products with payment plans
